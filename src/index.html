@@ -1,0 +1,101 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Response</title>
+</head>
+
+<body>
+    <h1>API Response</h1>
+
+    <!-- Input fields for all the fields -->
+    <div>
+        <label for="user-id-input">User ID:</label>
+        <input type="text" id="user-id-input" placeholder="Enter User ID">
+    </div>
+    <div>
+        <label for="email-input">Email:</label>
+        <input type="text" id="email-input" placeholder="Enter Email">
+    </div>
+    <div>
+        <label for="roll-number-input">Roll Number:</label>
+        <input type="text" id="roll-number-input" placeholder="Enter Roll Number">
+    </div>
+
+    
+    <div>
+        <label for="numbers-input">Numbers (comma-separated):</label>
+        <input type="text" id="numbers-input" placeholder="Enter Numbers">
+    </div>
+    <div>
+        <label for="alphabets-input">Alphabets (comma-separated):</label>
+        <input type="text" id="alphabets-input" placeholder="Enter Alphabets">
+    </div>
+
+    <!-- Button to trigger the API request -->
+    <button id="fetch-data-button">Fetch Data</button>
+
+    
+    <div id="response-data"></div>
+    <div id="numbers-output"></div>
+    <div id="alphabets-output"></div>
+    <div id="highest-alphabet-output"></div>
+
+    <script>
+        
+        const fetchButton = document.getElementById('fetch-data-button');
+        const responseData = document.getElementById('response-data');
+        const numbersOutput = document.getElementById('numbers-output');
+        const alphabetsOutput = document.getElementById('alphabets-output');
+        const highestAlphabetOutput = document.getElementById('highest-alphabet-output');
+        const userIdInput = document.getElementById('user-id-input');
+        const emailInput = document.getElementById('email-input');
+        const rollNumberInput = document.getElementById('roll-number-input');
+        const numbersInput = document.getElementById('numbers-input');
+        const alphabetsInput = document.getElementById('alphabets-input');
+
+        fetchButton.addEventListener('click', () => {
+            const userId = userIdInput.value.trim();
+            const email = emailInput.value.trim();
+            const rollNumber = rollNumberInput.value.trim();
+            const numbers = numbersInput.value.trim().split(',').map(item => item.trim());
+            const alphabets = alphabetsInput.value.trim().split(',').map(item => item.trim());
+
+            
+            fetch('/api/postEndpoint', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: userId,
+                    email: email,
+                    roll_number: rollNumber,
+                    numbers: numbers,
+                    alphabets: alphabets,
+                }),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    
+                    responseData.innerHTML = JSON.stringify(data, null, 2);
+
+                    
+                    const { numbers, alphabets, highest_alphabet } = data;
+                    numbersOutput.innerHTML = `Numbers: ${numbers.join(', ')}`;
+                    alphabetsOutput.innerHTML = `Alphabets: ${alphabets.join(', ')}`;
+                    highestAlphabetOutput.innerHTML = `Highest Alphabet: ${highest_alphabet[0]}`;
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        });
+    </script>
+</body>
+
+</html>
